@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Campaign Builder — Tailored marketing campaign planner for UK businesses.">
+  <title>Campaign Builder | Marketing Agency Campaign Planner</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Global Header -->
+  <header class="site-header" role="banner">
+    <div class="container header-container">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="9" height="9" rx="2" fill="#d44a0c" />
+            <rect x="13" y="2" width="9" height="9" rx="2" fill="#2f3ba3" />
+            <rect x="2" y="13" width="9" height="9" rx="2" fill="#03b4f7" />
+            <rect x="13" y="13" width="9" height="9" rx="2" fill="#121742" />
+          </svg>
+        </span>
+        <div class="brand-text">
+          <span class="brand-title">Campaign Builder</span>
+          <span class="brand-tagline">UK Marketing Strategy Tool</span>
+        </div>
+      </div>
+      <div class="header-badge">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Interactive Scoping</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Wizard Container -->
+  <main class="main-content" id="main" role="main">
+    <div class="container wizard-wrapper">
+
+      <!-- Progress Navigation -->
+      <nav class="progress-bar-nav" aria-label="Campaign building steps">
+        <ol class="progress-track" id="progressTrack">
+          <li class="progress-step active" data-step="1">
+            <button type="button" class="step-btn" data-target="1" aria-current="step">
+              <span class="step-num">1</span>
+              <span class="step-label">Business</span>
+            </button>
+          </li>
+          <li class="progress-step" data-step="2">
+            <button type="button" class="step-btn" data-target="2" disabled>
+              <span class="step-num">2</span>
+              <span class="step-label">Goal</span>
+            </button>
+          </li>
+          <li class="progress-step" data-step="3">
+            <button type="button" class="step-btn" data-target="3" disabled>
+              <span class="step-num">3</span>
+              <span class="step-label">Involvement</span>
+            </button>
+          </li>
+          <li class="progress-step" data-step="4">
+            <button type="button" class="step-btn" data-target="4" disabled>
+              <span class="step-num">4</span>
+              <span class="step-label">Budget</span>
+            </button>
+          </li>
+          <li class="progress-step" data-step="5">
+            <button type="button" class="step-btn" data-target="5" disabled>
+              <span class="step-num">5</span>
+              <span class="step-label">Campaign</span>
+            </button>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Wizard Form Container -->
+      <form id="campaignForm" class="wizard-form" onsubmit="return false;">
+
+        <!-- STEP 1: BUSINESS TYPE -->
+        <section class="wizard-step active" id="step1" data-step="1" aria-labelledby="step1-title">
+          <div class="step-header">
+            <span class="step-pill">Step 1 of 4</span>
+            <h1 class="step-title" id="step1-title">Tell us about your business</h1>
+            <p class="step-subtitle">Choose the option that best describes your business.</p>
+          </div>
+
+          <fieldset class="cards-fieldset">
+            <legend class="sr-only">Select your business type</legend>
+            <div class="cards-grid grid-7" id="businessOptionsGroup" role="radiogroup" aria-labelledby="step1-title">
+              <!-- Dynamically populated from JS config or templated below -->
+            </div>
+          </fieldset>
+        </section>
+
+        <!-- STEP 2: CAMPAIGN GOAL -->
+        <section class="wizard-step" id="step2" data-step="2" aria-labelledby="step2-title" hidden>
+          <div class="step-header">
+            <span class="step-pill">Step 2 of 4</span>
+            <h2 class="step-title" id="step2-title">What do you want to achieve?</h2>
+            <p class="step-subtitle">Select your primary objective for this campaign period.</p>
+          </div>
+
+          <fieldset class="cards-fieldset">
+            <legend class="sr-only">Select your campaign goal</legend>
+            <div class="cards-grid grid-7" id="goalOptionsGroup" role="radiogroup" aria-labelledby="step2-title">
+              <!-- Dynamically populated from JS -->
+            </div>
+          </fieldset>
+        </section>
+
+        <!-- STEP 3: LEVEL OF INVOLVEMENT -->
+        <section class="wizard-step" id="step3" data-step="3" aria-labelledby="step3-title" hidden>
+          <div class="step-header">
+            <span class="step-pill">Step 3 of 4</span>
+            <h2 class="step-title" id="step3-title">How involved do you want to be?</h2>
+            <p class="step-subtitle">This step is important. Select how you would like to collaborate with our team.</p>
+          </div>
+
+          <fieldset class="cards-fieldset">
+            <legend class="sr-only">Select your desired level of involvement</legend>
+            <div class="cards-grid grid-involvement" id="involvementOptionsGroup" role="radiogroup" aria-labelledby="step3-title">
+              <!-- Rendered as 3 large cards -->
+            </div>
+          </fieldset>
+        </section>
+
+        <!-- STEP 4: BUDGET -->
+        <section class="wizard-step" id="step4" data-step="4" aria-labelledby="step4-title" hidden>
+          <div class="step-header">
+            <span class="step-pill">Step 4 of 4</span>
+            <h2 class="step-title" id="step4-title">What budget are you working with?</h2>
+            <p class="step-subtitle">Select a target monthly or project budget to help scope the deliverables.</p>
+          </div>
+
+          <fieldset class="cards-fieldset">
+            <legend class="sr-only">Select your budget tier</legend>
+            <div class="cards-grid grid-budget" id="budgetOptionsGroup" role="radiogroup" aria-labelledby="step4-title">
+              <!-- Rendered from JS -->
+            </div>
+          </fieldset>
+        </section>
+
+        <!-- STEP 5: RECOMMENDED CAMPAIGN -->
+        <section class="wizard-step step-campaign" id="step5" data-step="5" aria-labelledby="step5-title" hidden>
+          <div class="step-header text-center">
+            <span class="step-pill step-pill-success">Tailored Recommendation</span>
+            <h2 class="step-title" id="step5-title">YOUR CAMPAIGN</h2>
+            <p class="step-subtitle">Based on your business criteria, here is our recommended strategy and deliverables.</p>
+          </div>
+
+          <!-- Summary Bar -->
+          <div class="selection-summary-card" id="selectionSummary">
+            <!-- Injected by script.js -->
+          </div>
+
+          <!-- Recommended Campaign Section -->
+          <div class="campaign-recommendation-block">
+            <div class="section-label-row">
+              <h3 class="section-heading">Recommended Campaign</h3>
+              <span class="recommendation-badge" id="campaignPackageBadge">Curated Strategy</span>
+            </div>
+            
+            <div class="deliverables-grid" id="deliverablesContainer">
+              <!-- Deliverable cards injected by script.js -->
+            </div>
+          </div>
+
+          <!-- Why We Recommend This Section -->
+          <div class="rationale-block">
+            <div class="rationale-header">
+              <span class="rationale-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+              </span>
+              <h3 class="rationale-title">Why we recommend this</h3>
+            </div>
+            <p class="rationale-text" id="rationaleText">
+              <!-- Injected by script.js -->
+            </p>
+          </div>
+
+          <!-- Final Actions Bar -->
+          <div class="final-actions-panel">
+            <button type="button" class="btn btn-primary btn-large" id="btnRequestCampaign">
+              <span>REQUEST THIS CAMPAIGN</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+            <button type="button" class="btn btn-secondary" id="btnModifyCampaign">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              <span>MODIFY CAMPAIGN</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Bottom Controls for Steps 1 - 4 -->
+        <footer class="wizard-nav-footer" id="wizardNavFooter">
+          <button type="button" class="btn btn-outline" id="btnBack" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back</span>
+          </button>
+          <button type="button" class="btn btn-primary" id="btnContinue" disabled>
+            <span>Continue</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </footer>
+
+      </form>
+    </div>
+  </main>
+
+  <!-- Campaign Enquiry Modal (HTML5 Dialog) -->
+  <dialog class="modal-dialog" id="enquiryModal" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <span class="modal-pretitle">Next Steps</span>
+          <h3 class="modal-title" id="modalTitle">Campaign enquiry</h3>
+        </div>
+        <button type="button" class="modal-close-btn" id="btnCloseModal" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Compact Campaign Recap inside Modal -->
+      <div class="modal-campaign-recap" id="modalCampaignRecap">
+        <!-- Injected via script.js -->
+      </div>
+
+      <!-- Enquiry Form State -->
+      <form id="enquiryForm" class="enquiry-form">
+        <div class="form-group">
+          <label for="clientName">Name <span class="required-star">*</span></label>
+          <input type="text" id="clientName" name="name" required placeholder="e.g. Sarah Jenkins" autocomplete="name">
+        </div>
+
+        <div class="form-group">
+          <label for="businessName">Business name <span class="required-star">*</span></label>
+          <input type="text" id="businessName" name="businessName" required placeholder="e.g. The Olive Grove Café" autocomplete="organization">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="clientEmail">Email <span class="required-star">*</span></label>
+            <input type="email" id="clientEmail" name="email" required placeholder="sarah@example.co.uk" autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="clientPhone">Phone <span class="required-star">*</span></label>
+            <input type="tel" id="clientPhone" name="phone" required placeholder="07123 456789" autocomplete="tel">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="clientMessage">Message <span class="optional-label">(optional)</span></label>
+          <textarea id="clientMessage" name="message" rows="3" placeholder="Tell us any specific timelines or requirements..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary btn-full" id="btnSubmitEnquiry">
+            <span>Send Campaign Enquiry</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Enquiry Success State -->
+      <div class="enquiry-success" id="enquirySuccessState" hidden>
+        <div class="success-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <h4 class="success-title">Thank you. Your campaign enquiry has been prepared.</h4>
+        <p class="success-desc">Our UK campaign specialist will review your proposed scope and get in touch within one business day with exact timings and confirmation.</p>
+        <div class="success-details-box" id="successDetailsBox">
+          <!-- Summary recap in success state -->
+        </div>
+        <button type="button" class="btn btn-secondary btn-full" id="btnFinishSuccess">Close Window</button>
+      </div>
+
+    </div>
+  </dialog>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <p class="footer-note">Campaign Builder &copy; Marketing Agency. All recommendations are tailored to UK local businesses and subject to final campaign consultation.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
