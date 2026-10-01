@@ -388,17 +388,27 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-/* Hidden Radio Input */
+/* Accessible Radio Input (visually hidden, keyboard and screen-reader accessible) */
 .card-radio-input {
   position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
   opacity: 0;
-  width: 0;
-  height: 0;
-  pointer-events: none;
 }
 
-/* Focus State */
-.selection-card:focus-within {
+/* Focus States for Keyboard Navigation */
+.selection-card:focus,
+.selection-card:focus-visible,
+.selection-card:focus-within,
+.involvement-card:focus,
+.involvement-card:focus-visible,
+.involvement-card:focus-within {
   outline: 2px solid var(--color-blue-accent);
   outline-offset: 2px;
 }

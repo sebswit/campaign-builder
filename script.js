@@ -350,7 +350,7 @@ function buildFallbackCampaign(businessId, goalId, involvementId, budgetId) {
 function generateRecommendationRationale(businessId, goalId) {
   const rationaleMap = {
     'restaurant-cafe': {
-      'local-customers': 'For food and hospitality businesses, high-quality visual content triggers immediate craving, while geotargeted local advertising reaches diners who live or work within direct visiting distance.',
+      'local-customers': 'Short-form video helps showcase your business visually, while local advertising and leaflet distribution can help reach potential customers in your area.',
       'increase-bookings': 'Highlighting signature dishes alongside a clear booking link converts casual browsers into confirmed table reservations without unnecessary friction.',
       'default': 'Hospitality thrives on authentic visual presentation. Regular photographic and video updates keep your venue front-of-mind when locals decide where to eat.'
     },
@@ -400,6 +400,7 @@ function generateRecommendationRationale(businessId, goalId) {
 const state = {
   currentStep: 1,
   totalSteps: 5,
+  highestStepReached: 1,
   selections: {
     business: null,
     goal: null,
@@ -458,8 +459,8 @@ const DOM = {
 function renderAllOptionCards() {
   // 1. Business Cards
   DOM.businessOptionsGroup.innerHTML = CONFIG.businessTypes.map(item => `
-    <label class="selection-card" data-key="business" data-val="${item.id}">
-      <input type="radio" name="businessType" value="${item.id}" class="card-radio-input">
+    <label class="selection-card" data-key="business" data-val="${item.id}" tabindex="0" role="radio" aria-checked="false">
+      <input type="radio" name="businessType" value="${item.id}" class="card-radio-input" tabindex="-1">
       <div class="card-icon-box" aria-hidden="true">${item.icon}</div>
       <div class="card-content">
         <div class="card-title">${item.title}</div>
@@ -473,8 +474,8 @@ function renderAllOptionCards() {
 
   // 2. Goal Cards
   DOM.goalOptionsGroup.innerHTML = CONFIG.goals.map(item => `
-    <label class="selection-card" data-key="goal" data-val="${item.id}">
-      <input type="radio" name="campaignGoal" value="${item.id}" class="card-radio-input">
+    <label class="selection-card" data-key="goal" data-val="${item.id}" tabindex="0" role="radio" aria-checked="false">
+      <input type="radio" name="campaignGoal" value="${item.id}" class="card-radio-input" tabindex="-1">
       <div class="card-icon-box" aria-hidden="true">${item.icon}</div>
       <div class="card-content">
         <div class="card-title">${item.title}</div>
@@ -488,8 +489,8 @@ function renderAllOptionCards() {
 
   // 3. Involvement Cards (Three large prominent cards)
   DOM.involvementOptionsGroup.innerHTML = CONFIG.involvementTiers.map(item => `
-    <label class="involvement-card" data-key="involvement" data-val="${item.id}">
-      <input type="radio" name="involvementLevel" value="${item.id}" class="card-radio-input">
+    <label class="involvement-card" data-key="involvement" data-val="${item.id}" tabindex="0" role="radio" aria-checked="false">
+      <input type="radio" name="involvementLevel" value="${item.id}" class="card-radio-input" tabindex="-1">
       <span class="involvement-badge">${item.badge}</span>
       <div class="involvement-header">
         <h3 class="involvement-title">${item.title}</h3>
@@ -507,8 +508,8 @@ function renderAllOptionCards() {
 
   // 4. Budget Cards
   DOM.budgetOptionsGroup.innerHTML = CONFIG.budgetTiers.map(item => `
-    <label class="selection-card budget-card" data-key="budget" data-val="${item.id}">
-      <input type="radio" name="budgetTier" value="${item.id}" class="card-radio-input">
+    <label class="selection-card budget-card" data-key="budget" data-val="${item.id}" tabindex="0" role="radio" aria-checked="false">
+      <input type="radio" name="budgetTier" value="${item.id}" class="card-radio-input" tabindex="-1">
       <div class="budget-tier-val">${item.label}</div>
       <div class="budget-tier-desc">${item.hint}</div>
       <div class="card-check-indicator" aria-hidden="true" style="margin-top:0.75rem;">
@@ -522,7 +523,7 @@ function renderAllOptionCards() {
 }
 
 /**
- * Attach click & change listeners to cards
+ * Attach click, change & keyboard listeners to cards
  */
 function attachCardEvents() {
   const allCards = document.querySelectorAll('.selection-card, .involvement-card');
@@ -530,10 +531,16 @@ function attachCardEvents() {
     const radio = card.querySelector('input[type="radio"]');
 
     card.addEventListener('click', () => {
-      if (!radio.checked) {
-        radio.checked = true;
-      }
+      radio.checked = true;
       handleCardSelection(card.dataset.key, card.dataset.val, card);
+    });
+
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        radio.checked = true;
+        handleCardSelection(card.dataset.key, card.dataset.val, card);
+      }
     });
 
     radio.addEventListener('change', () => {
@@ -548,10 +555,14 @@ function attachCardEvents() {
 function handleCardSelection(key, val, selectedCardElement) {
   state.selections[key] = val;
 
-  // Visual active classes
+  // Visual active classes & accessibility attributes
   const siblings = selectedCardElement.parentElement.querySelectorAll('.selection-card, .involvement-card');
-  siblings.forEach(el => el.classList.remove('selected'));
+  siblings.forEach(el => {
+    el.classList.remove('selected');
+    el.setAttribute('aria-checked', 'false');
+  });
   selectedCardElement.classList.add('selected');
+  selectedCardElement.setAttribute('aria-checked', 'true');
 
   // Enable continue button
   updateNavControls();
@@ -562,6 +573,8 @@ function handleCardSelection(key, val, selectedCardElement) {
  */
 function goToStep(stepNumber) {
   if (stepNumber < 1 || stepNumber > state.totalSteps) return;
+
+  state.highestStepReached = Math.max(state.highestStepReached, stepNumber);
 
   // Hide all steps
   for (let i = 1; i <= state.totalSteps; i++) {
@@ -612,8 +625,11 @@ function updateProgressBar() {
     } else if (stepIdx < state.currentStep) {
       li.classList.add('completed');
       btn.disabled = false; // allow clicking previous steps
+    } else if (stepIdx <= state.highestStepReached) {
+      li.classList.add('completed');
+      btn.disabled = false; // already visited in current flow
     } else {
-      // Future step
+      // Future step not yet reached
       btn.disabled = true;
     }
   });
@@ -822,7 +838,7 @@ function initApp() {
     const btn = e.target.closest('.step-btn');
     if (!btn || btn.disabled) return;
     const targetStep = parseInt(btn.dataset.target, 10);
-    if (!isNaN(targetStep) && targetStep <= state.currentStep) {
+    if (!isNaN(targetStep) && targetStep <= state.highestStepReached) {
       goToStep(targetStep);
     }
   });
