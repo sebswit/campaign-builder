@@ -63,13 +63,13 @@
           <li class="progress-step" data-step="4">
             <button type="button" class="step-btn" data-target="4" disabled>
               <span class="step-num">4</span>
-              <span class="step-label">Budget</span>
+              <span class="step-label">Campaign</span>
             </button>
           </li>
           <li class="progress-step" data-step="5">
             <button type="button" class="step-btn" data-target="5" disabled>
               <span class="step-num">5</span>
-              <span class="step-label">Campaign</span>
+              <span class="step-label">Choose Package</span>
             </button>
           </li>
         </ol>
@@ -126,28 +126,12 @@
           </fieldset>
         </section>
 
-        <!-- STEP 4: BUDGET -->
-        <section class="wizard-step" id="step4" data-step="4" aria-labelledby="step4-title" hidden>
-          <div class="step-header">
-            <span class="step-pill">Step 4 of 5</span>
-            <h2 class="step-title" id="step4-title">What budget are you working with?</h2>
-            <p class="step-subtitle">Select a target budget to help scope the deliverables.</p>
-          </div>
-
-          <fieldset class="cards-fieldset">
-            <legend class="sr-only">Select your budget tier</legend>
-            <div class="cards-grid grid-budget" id="budgetOptionsGroup" role="radiogroup" aria-labelledby="step4-title">
-              <!-- Rendered from JS -->
-            </div>
-          </fieldset>
-        </section>
-
-        <!-- STEP 5: RECOMMENDED CAMPAIGN -->
-        <section class="wizard-step step-campaign" id="step5" data-step="5" aria-labelledby="step5-title" hidden>
+        <!-- STEP 4: CAMPAIGN STRATEGY & RECOMMENDATION -->
+        <section class="wizard-step step-campaign" id="step4" data-step="4" aria-labelledby="step4-title" hidden>
           <div class="step-header text-center">
-            <span class="step-pill step-pill-success">Step 5 of 5 &bull; Recommended Campaign</span>
-            <h2 class="step-title" id="step5-title">YOUR CAMPAIGN</h2>
-            <p class="step-subtitle">Based on your business criteria, here is our recommended strategy and deliverables.</p>
+            <span class="step-pill step-pill-success">Step 4 of 5 &bull; Strategy Recommendation</span>
+            <h2 class="step-title" id="step4-title">YOUR CAMPAIGN STRATEGY</h2>
+            <p class="step-subtitle">Based on your business, goal, and desired involvement, here is our recommended strategic focus.</p>
           </div>
 
           <!-- Summary Bar -->
@@ -155,15 +139,15 @@
             <!-- Injected by script.js -->
           </div>
 
-          <!-- Recommended Campaign Section -->
+          <!-- Recommended Strategy Block -->
           <div class="campaign-recommendation-block">
             <div class="section-label-row">
-              <h3 class="section-heading">Recommended Campaign</h3>
-              <span class="recommendation-badge" id="campaignPackageBadge">Curated Strategy</span>
+              <h3 class="section-heading">Core Strategic Focus</h3>
+              <span class="recommendation-badge" id="campaignStrategyBadge">Tailored Strategy</span>
             </div>
             
             <div class="deliverables-grid" id="deliverablesContainer">
-              <!-- Deliverable cards injected by script.js -->
+              <!-- Deliverable focus cards injected by script.js -->
             </div>
           </div>
 
@@ -183,23 +167,77 @@
               <!-- Injected by script.js -->
             </p>
           </div>
+        </section>
 
-          <!-- Final Actions Bar -->
-          <div class="final-actions-panel">
-            <button type="button" class="btn btn-primary btn-large" id="btnRequestCampaign">
-              <span>REQUEST THIS CAMPAIGN</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </button>
-            <button type="button" class="btn btn-secondary" id="btnModifyCampaign">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-              </svg>
-              <span>MODIFY CAMPAIGN</span>
-            </button>
+        <!-- STEP 5: CHOOSE YOUR PACKAGE -->
+        <section class="wizard-step step-packages" id="step5" data-step="5" aria-labelledby="step5-title" hidden>
+          <div class="step-header text-center">
+            <span class="step-pill step-pill-success">Step 5 of 5 &bull; Package Selection</span>
+            <h2 class="step-title" id="step5-title">CHOOSE YOUR PACKAGE</h2>
+            <p class="step-subtitle">Compare our 4 campaign tiers. Each package progressively expands the campaign strategy.</p>
+          </div>
+
+          <!-- 4 Comparison Cards Grid -->
+          <div class="packages-comparison-grid" id="packageCardsGrid" role="radiogroup" aria-labelledby="step5-title">
+            <!-- Injected dynamically by script.js -->
+          </div>
+
+          <!-- Final Selected Package Summary Panel (Visible when package is selected) -->
+          <div class="final-campaign-summary" id="finalCampaignSummary" hidden>
+            <div class="final-summary-header">
+              <h3 class="final-summary-title">YOUR CAMPAIGN</h3>
+              <span class="final-summary-badge" id="summaryPackageBadge">Selected Package</span>
+            </div>
+
+            <div class="final-summary-body">
+              <div class="summary-details-grid">
+                <div class="summary-detail-item">
+                  <span class="summary-detail-label">Business:</span>
+                  <strong class="summary-detail-val" id="summaryBusinessVal">-</strong>
+                </div>
+                <div class="summary-detail-item">
+                  <span class="summary-detail-label">Goal:</span>
+                  <strong class="summary-detail-val" id="summaryGoalVal">-</strong>
+                </div>
+                <div class="summary-detail-item">
+                  <span class="summary-detail-label">Service level:</span>
+                  <strong class="summary-detail-val" id="summaryInvolvementVal">-</strong>
+                </div>
+                <div class="summary-detail-item">
+                  <span class="summary-detail-label">Selected package:</span>
+                  <strong class="summary-detail-val highlight-val" id="summaryPackageVal">-</strong>
+                </div>
+              </div>
+
+              <div class="summary-services-box">
+                <span class="summary-detail-label">Included services:</span>
+                <ul class="summary-services-list" id="summaryServicesList">
+                  <!-- Populated by script.js -->
+                </ul>
+              </div>
+
+              <div class="summary-cost-box">
+                <span class="summary-cost-label">Estimated campaign cost:</span>
+                <div class="summary-cost-val" id="summaryCostVal">£0</div>
+              </div>
+            </div>
+
+            <!-- Final Actions Bar -->
+            <div class="final-actions-panel">
+              <button type="button" class="btn btn-primary btn-large" id="btnRequestCampaign">
+                <span>REQUEST THIS CAMPAIGN</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button>
+              <button type="button" class="btn btn-secondary" id="btnChangePackage">
+                <span>CHANGE PACKAGE</span>
+              </button>
+              <button type="button" class="btn btn-outline" id="btnModifyCampaign">
+                <span>MODIFY CAMPAIGN</span>
+              </button>
+            </div>
           </div>
         </section>
 
@@ -213,7 +251,7 @@
             <span>Back</span>
           </button>
           <button type="button" class="btn btn-primary" id="btnContinue" disabled>
-            <span>Continue</span>
+            <span id="btnContinueText">Continue</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>

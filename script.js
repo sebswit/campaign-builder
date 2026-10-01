@@ -1,15 +1,14 @@
 /**
  * ============================================================================
- * CAMPAIGN BUILDER — CONFIGURATION & RECOMMENDATION ENGINE
+ * CAMPAIGN BUILDER — JAVASCRIPT CONTROLLER & RECOMMENDATION ENGINE
  * ============================================================================
- * Clean, lightweight, dependency-free vanilla JavaScript for UK marketing agency.
- * All recommendation rules, service items, and card definitions are centralized
- * here for fast and easy future modification.
+ * Flow: Business -> Goal -> Involvement -> Campaign Strategy -> Choose Package
+ * Fully vanilla JS, lightweight, responsive, accessible.
  */
 
-/* ==========================================================================
-   1. EDITABLE CONFIGURATION: CARD DEFINITIONS
-   ========================================================================== */
+// ============================================================================
+// 1. EDITABLE CONFIGURATION: SELECTION OPTIONS
+// ============================================================================
 
 const CONFIG = {
   // Step 1: Business Types
@@ -104,7 +103,7 @@ const CONFIG = {
     }
   ],
 
-  // Step 3: Level of Involvement (3 Large Cards)
+  // Step 3: Level of Involvement (3 Large Prominent Cards)
   involvementTiers: [
     {
       id: 'self-managed',
@@ -130,223 +129,38 @@ const CONFIG = {
       description: 'We plan, create and manage the full campaign, including content, advertising and distribution where appropriate.',
       actionPrompt: 'Select Full Campaign Management'
     }
-  ],
-
-  // Step 4: Budget Tiers
-  budgetTiers: [
-    {
-      id: 'up-to-300',
-      label: 'Up to £300',
-      hint: 'Starter / Essential'
-    },
-    {
-      id: '300-700',
-      label: '£300–£700',
-      hint: 'Growth / Core'
-    },
-    {
-      id: '700-1500',
-      label: '£700–£1,500',
-      hint: 'Scale / Multi-channel'
-    },
-    {
-      id: '1500-plus',
-      label: '£1,500+',
-      hint: 'Accelerated / Comprehensive'
-    },
-    {
-      id: 'not-sure',
-      label: 'Not sure yet',
-      hint: 'Guidance required'
-    }
   ]
 };
 
-/* ==========================================================================
-   2. RECOMMENDATION RULES & LOGIC
-   ========================================================================== */
-
-/**
- * EXACT PRESET RULES
- * Define specific high-value combinations with their exact deliverable items.
- * Keys use the format: `${businessId}|${goalId}|${involvementId}|${budgetId}`
- * Wildcards (*) can be used if an exact match applies across budgets or goals.
- */
-const PRESET_RULES = [
-  // Example 1: Restaurant / Café + Get more local customers + I’ll take it from here + £300–£700
-  {
-    business: 'restaurant-cafe',
-    goal: 'local-customers',
-    involvement: 'self-managed',
-    budget: '300-700',
-    packageName: 'Local Foodie Content Essentials',
-    deliverables: [
-      { name: '1 short-form video', desc: 'Crafted for Instagram Reels & TikTok showcasing signature dish preparation.' },
-      { name: '8 social media photos', desc: 'High-resolution food, interior ambience, and table photography.' },
-      { name: '4 ready-to-post graphics', desc: 'Brand-styled menu specials, opening times, and event announcements.' }
-    ]
+// ============================================================================
+// CAMPAIGN PRICING CONFIGURATION
+// All prices in GBP (£). Easily adjustable for future agency rate adjustments.
+// ============================================================================
+const CAMPAIGN_PRICING = {
+  'self-managed': {
+    essential: 350,
+    growth: 650,
+    impact: 1100,
+    complete: 1650
   },
-
-  // Example 2: Restaurant / Café + Get more local customers + Do it for me + £700–£1,500
-  {
-    business: 'restaurant-cafe',
-    goal: 'local-customers',
-    involvement: 'fully-managed',
-    budget: '700-1500',
-    packageName: 'Full Local Dining Footfall Engine',
-    deliverables: [
-      { name: '2 short-form videos', desc: 'Dynamic behind-the-scenes kitchen and chef feature videos.' },
-      { name: '12 social media photos', desc: 'Complete seasonal menu photo shoot and beverage presentation.' },
-      { name: '8 social posts', desc: 'Full caption copywriting, hashtag strategy, and scheduled publishing.' },
-      { name: 'Meta Ads setup', desc: 'Geo-fenced Instagram and Facebook local dining advertising campaign.' },
-      { name: 'Leaflet campaign', desc: 'Print-ready door drop design tailored for surrounding postal areas.' }
-    ]
+  'co-managed': {
+    essential: 550,
+    growth: 950,
+    impact: 1550,
+    complete: 2250
   },
-
-  // Example 3: Estate Agent / Property + Promote a property + I’ll take it from here
-  {
-    business: 'estate-agent',
-    goal: 'promote-property',
-    involvement: 'self-managed',
-    budget: '*', // applies across budgets
-    packageName: 'Property Showcase Asset Pack',
-    deliverables: [
-      { name: 'Property photography', desc: 'Wide-angle interior and architectural photography with HDR mastering.' },
-      { name: 'Video walkthrough', desc: 'Cinematic video tour highlighted for property portals and socials.' },
-      { name: 'Drone exterior footage', desc: 'Elevated aerial photos and video illustrating boundary and locale.' },
-      { name: '360 virtual tour', desc: 'Interactive digital walkthrough ready to embed on listing portals.' }
-    ]
-  },
-
-  // Example 4: Beauty / Barber + Increase bookings + Do it for me
-  {
-    business: 'beauty-barber',
-    goal: 'increase-bookings',
-    involvement: 'fully-managed',
-    budget: '*', // applies across budgets
-    packageName: 'Client Booking Accelerator',
-    deliverables: [
-      { name: '2 short-form videos', desc: 'Transformation reels and client service showcases formatted for TikTok/IG.' },
-      { name: '10 social photos', desc: 'Editorial finish before/after portfolio and treatment room photography.' },
-      { name: 'Social content package', desc: 'Scheduled calendar, caption copywriting, and booking link integration.' },
-      { name: 'Meta Ads campaign', desc: 'Targeted local ads driving direct traffic to your online booking software.' }
-    ]
-  },
-
-  // Example 5: Trades & Local Services + Get more local customers + Do it for me
-  {
-    business: 'trades-services',
-    goal: 'local-customers',
-    involvement: 'fully-managed',
-    budget: '*',
-    packageName: 'Local Authority & Inquiries System',
-    deliverables: [
-      { name: 'Short promotional video', desc: 'Trust-building intro highlighting reliability, certifications, and work quality.' },
-      { name: 'Service photography', desc: 'High-res photos of vans, team, equipment, and completed project sites.' },
-      { name: 'Local social media content', desc: 'Weekly project progress posts and satisfied customer testimonials.' },
-      { name: 'Leaflet campaign', desc: 'Neighbourhood card design for drops around active job sites.' },
-      { name: 'Local paid ads', desc: 'Google search / Meta local service ads capturing high-intent quote inquiries.' }
-    ]
+  'fully-managed': {
+    essential: 750,
+    growth: 1350,
+    impact: 2150,
+    complete: 3250
   }
-];
+};
 
-/**
- * DYNAMIC FALLBACK BUILDER
- * Generates an appropriate, sensible campaign package if no exact rule matches.
- */
-function buildFallbackCampaign(businessId, goalId, involvementId, budgetId) {
-  const deliverables = [];
-  let packageName = 'Tailored Marketing Package';
+// ============================================================================
+// 2. CAMPAIGN STRATEGY & RATIONALE ENGINE (Step 4)
+// ============================================================================
 
-  // 1. Core deliverables determined by Level of Involvement
-  if (involvementId === 'self-managed') {
-    packageName = 'Self-Publishing Content Asset Pack';
-    deliverables.push({
-      name: 'High-Resolution Photography',
-      desc: 'Professional shoot covering your primary services, products, and premises.'
-    });
-    deliverables.push({
-      name: 'Short-Form Video Asset',
-      desc: 'Mobile-optimised video ready for Instagram Reels or TikTok with audio guidance.'
-    });
-    deliverables.push({
-      name: 'Custom Social Graphic Templates',
-      desc: 'Editable, on-brand graphic templates for your daily posts and stories.'
-    });
-  } else if (involvementId === 'co-managed') {
-    packageName = 'Collaborative Growth Campaign';
-    deliverables.push({
-      name: 'Monthly Content Creation Pack',
-      desc: 'Curated mix of edited video reels, photography, and promotional banners.'
-    });
-    deliverables.push({
-      name: 'Content Calendar & Copywriting',
-      desc: 'Full caption drafting, strategic hashtags, and optimal schedule planning.'
-    });
-    deliverables.push({
-      name: 'Social Publishing Support',
-      desc: 'Guidance and platform management to maintain consistent weekly posting.'
-    });
-  } else {
-    // fully-managed
-    packageName = 'Full-Service Campaign Engine';
-    deliverables.push({
-      name: 'Omni-Channel Content Production',
-      desc: 'Comprehensive photography, video assets, and tailored creative concepts.'
-    });
-    deliverables.push({
-      name: 'End-to-End Social Management',
-      desc: 'Scheduling, customer inquiries response support, and profile optimisation.'
-    });
-    deliverables.push({
-      name: 'Targeted Paid Advertising Setup',
-      desc: 'Precision ad campaign on Meta or Google focused on qualified conversions.'
-    });
-    deliverables.push({
-      name: 'Monthly Performance Analytics',
-      desc: 'Clear, transparent monthly reporting on lead volume, reach, and ROI.'
-    });
-  }
-
-  // 2. Budget scale adjustments
-  if (budgetId === '700-1500' || budgetId === '1500-plus') {
-    if (!deliverables.some(d => d.name.includes('Paid Advertising'))) {
-      deliverables.push({
-        name: 'Paid Media Budget Allocation',
-        desc: 'Strategic ad placement focused specifically on target postal sectors.'
-      });
-    }
-  }
-
-  // 3. Goal specific adjustments
-  if (goalId === 'increase-bookings') {
-    deliverables.push({
-      name: 'Booking Funnel Link Integration',
-      desc: 'Optimised call-to-actions directly linking social traffic to your booking portal.'
-    });
-  } else if (goalId === 'launch-business') {
-    deliverables.push({
-      name: 'Grand Opening Announcement Suite',
-      desc: 'High-impact launch teaser graphics, countdown stories, and press-ready copy.'
-    });
-  } else if (goalId === 'promote-property' && !deliverables.some(d => d.name.toLowerCase().includes('walkthrough'))) {
-    deliverables.push({
-      name: 'Virtual Walkthrough Asset',
-      desc: 'Detailed interior visual overview formatted for listings and social promotion.'
-    });
-  }
-
-  return {
-    packageName,
-    deliverables
-  };
-}
-
-/**
- * REASONING GENERATOR
- * Generates an honest, grounded UK agency explanation ("Why we recommend this")
- * avoiding hype or exaggerated marketing claims.
- */
 function generateRecommendationRationale(businessId, goalId) {
   const rationaleMap = {
     'restaurant-cafe': {
@@ -389,13 +203,245 @@ function generateRecommendationRationale(businessId, goalId) {
     }
   }
 
-  // Fallback rationale
   return 'A balanced combination of professional creative assets and targeted local distribution provides the clearest path to reaching your target audience efficiently without wasted marketing spend.';
 }
 
-/* ==========================================================================
-   3. APPLICATION STATE & CONTROLLER
-   ========================================================================== */
+/**
+ * Returns high-level core strategy focus for Step 4
+ */
+function getStrategyFocus(businessId, goalId, involvementId) {
+  const items = [];
+
+  if (involvementId === 'self-managed') {
+    items.push({ name: 'High-Impact Content Assets', desc: 'Crafting premium video and photography tailored for easy self-publishing.' });
+    items.push({ name: 'Ready-to-Post Creative Templates', desc: 'Brand-styled graphic assets ready for your immediate social updates.' });
+    items.push({ name: 'Publishing Guidelines', desc: 'Practical tips on audio, hashtags, and optimal posting times.' });
+  } else if (involvementId === 'co-managed') {
+    items.push({ name: 'Collaborative Content Production', desc: 'Scheduled shoots providing a regular flow of fresh reels and images.' });
+    items.push({ name: 'Captions & Calendar Management', desc: 'Professional copywriting and organized weekly schedule planning.' });
+    items.push({ name: 'Profile & Feed Optimisation', desc: 'Consistent social presence maintained alongside your internal team.' });
+  } else {
+    items.push({ name: 'Turnkey Creative Production', desc: 'Full-service photo, video, and promotional asset creation.' });
+    items.push({ name: 'Targeted Local Paid Distribution', desc: 'Geo-fenced digital ads or door-drop distribution capturing local intent.' });
+    items.push({ name: 'Active Campaign Management & Analytics', desc: 'End-to-end execution with ongoing performance optimization.' });
+  }
+
+  // Goal adaptation
+  if (goalId === 'increase-bookings') {
+    items.push({ name: 'Direct Booking Funnel Focus', desc: 'Frictionless links and calls-to-action guiding prospects directly into reservations.' });
+  } else if (goalId === 'promote-property' || businessId === 'estate-agent') {
+    items.push({ name: 'Immersive Property Media', desc: 'Cinematic interior video walkthroughs and aerial exterior overviews.' });
+  }
+
+  return items;
+}
+
+// ============================================================================
+// 3. FOUR-TIER PROGRESSIVE PACKAGE BUILDER (Step 5)
+// ============================================================================
+
+/**
+ * Builds the 4 progressive packages (ESSENTIAL, GROWTH, IMPACT, COMPLETE)
+ * strictly respecting the selected level of involvement and business context.
+ */
+function buildFourPackages(businessId, goalId, involvementId) {
+  const prices = CAMPAIGN_PRICING[involvementId] || CAMPAIGN_PRICING['co-managed'];
+
+  // Base assets customized by business/goal
+  const isProperty = (businessId === 'estate-agent' || goalId === 'promote-property');
+  const isFood = (businessId === 'restaurant-cafe');
+  const isServiceOrTrade = (businessId === 'trades-services');
+
+  let packages = [];
+
+  if (involvementId === 'self-managed') {
+    // ----------------------------------------------------
+    // INVOLVEMENT: I'll take it from here (Content Only)
+    // ----------------------------------------------------
+    packages = [
+      {
+        id: 'essential',
+        name: 'ESSENTIAL',
+        subtitle: 'Core campaign essentials',
+        price: prices.essential,
+        services: [
+          { text: isProperty ? 'Property photo shoot (10 HDR images)' : '1 short-form video (Reel / TikTok)', isNew: false },
+          { text: isProperty ? '1 cinematic video walkthrough' : '8 social media photos', isNew: false },
+          { text: '4 ready-to-post graphics', isNew: false },
+          { text: 'Basic publishing & audio guide', isNew: false }
+        ]
+      },
+      {
+        id: 'growth',
+        name: 'GROWTH',
+        subtitle: 'More content and greater reach',
+        price: prices.growth,
+        services: [
+          { text: isProperty ? 'Expanded property shoot (16 HDR images)' : '2 short-form videos', isNew: true },
+          { text: isProperty ? 'Video walkthrough + drone exterior footage' : '14 social media photos', isNew: true },
+          { text: '8 ready-to-post graphics & story templates', isNew: true },
+          { text: 'Content publishing calendar & hashtag strategy', isNew: true },
+          { text: 'High-resolution print-ready asset export', isNew: true }
+        ]
+      },
+      {
+        id: 'impact',
+        name: 'IMPACT',
+        subtitle: 'Multi-channel campaign',
+        price: prices.impact,
+        services: [
+          { text: isProperty ? '360 virtual tour + full video suite' : '3 short-form videos', isNew: true },
+          { text: '20 high-resolution photos', isNew: true },
+          { text: '12 social graphic templates', isNew: true },
+          { text: isFood || isServiceOrTrade ? 'Print-ready door-drop leaflet design' : 'Multi-format marketing creative suite', isNew: true },
+          { text: 'Self-serve Meta Ad creative pack & copy variants', isNew: true }
+        ]
+      },
+      {
+        id: 'complete',
+        name: 'COMPLETE',
+        subtitle: 'Full campaign management',
+        price: prices.complete,
+        services: [
+          { text: isProperty ? 'Full architectural photography, drone & 360 tour' : '5 short-form videos', isNew: true },
+          { text: '30 professional content photos', isNew: true },
+          { text: '16 branded graphic assets & story sets', isNew: true },
+          { text: 'Quarterly content asset library with cloud delivery', isNew: true },
+          { text: 'Multi-channel DIY campaign playbook & ad guidelines', isNew: true }
+        ]
+      }
+    ];
+  } else if (involvementId === 'co-managed') {
+    // ----------------------------------------------------
+    // INVOLVEMENT: Help me manage it (Content + Management)
+    // ----------------------------------------------------
+    packages = [
+      {
+        id: 'essential',
+        name: 'ESSENTIAL',
+        subtitle: 'Core campaign essentials',
+        price: prices.essential,
+        services: [
+          { text: isProperty ? 'Property photography & walkthrough' : '1 short-form video', isNew: false },
+          { text: '8 social media photos', isNew: false },
+          { text: '4 ready-to-post graphics', isNew: false },
+          { text: 'Full caption copywriting', isNew: false },
+          { text: 'Content scheduling calendar', isNew: false }
+        ]
+      },
+      {
+        id: 'growth',
+        name: 'GROWTH',
+        subtitle: 'More content and greater reach',
+        price: prices.growth,
+        services: [
+          { text: isProperty ? 'Video walkthrough + drone footage' : '2 short-form videos', isNew: true },
+          { text: '12 social media photos', isNew: true },
+          { text: '8 ready-to-post graphics', isNew: true },
+          { text: 'Captions & strategic hashtag sets', isNew: false },
+          { text: 'Social content scheduling (2 posts / week)', isNew: true },
+          { text: 'Monthly performance summary', isNew: true }
+        ]
+      },
+      {
+        id: 'impact',
+        name: 'IMPACT',
+        subtitle: 'Multi-channel campaign',
+        price: prices.impact,
+        services: [
+          { text: '3 short-form videos', isNew: true },
+          { text: '18 social media photos', isNew: true },
+          { text: '12 branded social graphics', isNew: true },
+          { text: 'Active multi-platform scheduling (3 posts / week)', isNew: true },
+          { text: isFood || isServiceOrTrade ? 'Print-ready leaflet design & print coordination' : 'Promotional flyer & banner designs', isNew: true },
+          { text: 'Local social boosting setup & budget recommendation', isNew: true }
+        ]
+      },
+      {
+        id: 'complete',
+        name: 'COMPLETE',
+        subtitle: 'Full campaign management',
+        price: prices.complete,
+        services: [
+          { text: '4 short-form videos', isNew: true },
+          { text: '24 professional photos', isNew: true },
+          { text: '16 branded graphics & carousel posts', isNew: true },
+          { text: 'Comprehensive scheduling (4 posts / week)', isNew: true },
+          { text: 'Inquiry response guidance & community monitoring', isNew: true },
+          { text: 'Bi-weekly campaign optimization & analytics review', isNew: true }
+        ]
+      }
+    ];
+  } else {
+    // ----------------------------------------------------
+    // INVOLVEMENT: Do it for me (Full Campaign Management)
+    // ----------------------------------------------------
+    packages = [
+      {
+        id: 'essential',
+        name: 'ESSENTIAL',
+        subtitle: 'Core campaign essentials',
+        price: prices.essential,
+        services: [
+          { text: '1 short-form video', isNew: false },
+          { text: '8 social photos', isNew: false },
+          { text: '4 branded graphics', isNew: false },
+          { text: 'Meta Ads campaign setup', isNew: false },
+          { text: 'Monthly performance report', isNew: false }
+        ]
+      },
+      {
+        id: 'growth',
+        name: 'GROWTH',
+        subtitle: 'More content and greater reach',
+        price: prices.growth,
+        services: [
+          { text: '2 short-form videos', isNew: true },
+          { text: '12 social media photos', isNew: true },
+          { text: '8 ready-to-post graphics', isNew: true },
+          { text: 'Meta Ads setup & active management', isNew: true },
+          { text: isFood || isServiceOrTrade ? 'Leaflet campaign design' : 'Local lead-gen ad creatives', isNew: true },
+          { text: 'Monthly campaign reporting & lead tracking', isNew: true }
+        ]
+      },
+      {
+        id: 'impact',
+        name: 'IMPACT',
+        subtitle: 'Multi-channel campaign',
+        price: prices.impact,
+        services: [
+          { text: '3 short-form videos', isNew: true },
+          { text: '18 social media photos', isNew: true },
+          { text: '12 social posts with end-to-end management', isNew: true },
+          { text: 'Multi-channel paid ads (Meta + Google Local)', isNew: true },
+          { text: isFood || isServiceOrTrade ? 'Leaflet design & door-drop campaign' : 'Direct mail / promotional collateral setup', isNew: true },
+          { text: 'Dedicated campaign manager & bi-weekly reports', isNew: true }
+        ]
+      },
+      {
+        id: 'complete',
+        name: 'COMPLETE',
+        subtitle: 'Full campaign management',
+        price: prices.complete,
+        services: [
+          { text: '5 high-impact short-form videos', isNew: true },
+          { text: '25 commercial-grade photos', isNew: true },
+          { text: 'Complete social media presence management', isNew: true },
+          { text: 'Full paid advertising management across Meta & Google', isNew: true },
+          { text: 'Targeted postal leaflet distribution management', isNew: true },
+          { text: 'Lead capture funnel & conversion tracking setup', isNew: true },
+          { text: 'Weekly strategy sync & proactive campaign direction', isNew: true }
+        ]
+      }
+    ];
+  }
+
+  return packages;
+}
+
+// ============================================================================
+// 4. APPLICATION STATE & CONTROLLER
+// ============================================================================
 
 const state = {
   currentStep: 1,
@@ -405,7 +451,7 @@ const state = {
     business: null,
     goal: null,
     involvement: null,
-    budget: null
+    package: null
   }
 };
 
@@ -423,23 +469,35 @@ const DOM = {
   ],
   btnBack: document.getElementById('btnBack'),
   btnContinue: document.getElementById('btnContinue'),
+  btnContinueText: document.getElementById('btnContinueText'),
   wizardNavFooter: document.getElementById('wizardNavFooter'),
 
-  // Step 1 - 4 Options Containers
+  // Step 1 - 3 Option Groups
   businessOptionsGroup: document.getElementById('businessOptionsGroup'),
   goalOptionsGroup: document.getElementById('goalOptionsGroup'),
   involvementOptionsGroup: document.getElementById('involvementOptionsGroup'),
-  budgetOptionsGroup: document.getElementById('budgetOptionsGroup'),
 
-  // Step 5 Containers
+  // Step 4 Elements
   selectionSummary: document.getElementById('selectionSummary'),
-  campaignPackageBadge: document.getElementById('campaignPackageBadge'),
+  campaignStrategyBadge: document.getElementById('campaignStrategyBadge'),
   deliverablesContainer: document.getElementById('deliverablesContainer'),
   rationaleText: document.getElementById('rationaleText'),
+
+  // Step 5 Elements
+  packageCardsGrid: document.getElementById('packageCardsGrid'),
+  finalCampaignSummary: document.getElementById('finalCampaignSummary'),
+  summaryBusinessVal: document.getElementById('summaryBusinessVal'),
+  summaryGoalVal: document.getElementById('summaryGoalVal'),
+  summaryInvolvementVal: document.getElementById('summaryInvolvementVal'),
+  summaryPackageVal: document.getElementById('summaryPackageVal'),
+  summaryPackageBadge: document.getElementById('summaryPackageBadge'),
+  summaryServicesList: document.getElementById('summaryServicesList'),
+  summaryCostVal: document.getElementById('summaryCostVal'),
   btnRequestCampaign: document.getElementById('btnRequestCampaign'),
+  btnChangePackage: document.getElementById('btnChangePackage'),
   btnModifyCampaign: document.getElementById('btnModifyCampaign'),
 
-  // Modal elements
+  // Modal Elements
   enquiryModal: document.getElementById('enquiryModal'),
   btnCloseModal: document.getElementById('btnCloseModal'),
   enquiryForm: document.getElementById('enquiryForm'),
@@ -449,12 +507,12 @@ const DOM = {
   btnFinishSuccess: document.getElementById('btnFinishSuccess')
 };
 
-/* ==========================================================================
-   4. RENDERING FUNCTIONS
-   ========================================================================== */
+// ============================================================================
+// 5. RENDERING FUNCTIONS
+// ============================================================================
 
 /**
- * Initialize dynamic cards for steps 1 - 4
+ * Renders selection cards for steps 1 - 3
  */
 function renderAllOptionCards() {
   // 1. Business Cards
@@ -506,18 +564,6 @@ function renderAllOptionCards() {
     </label>
   `).join('');
 
-  // 4. Budget Cards
-  DOM.budgetOptionsGroup.innerHTML = CONFIG.budgetTiers.map(item => `
-    <label class="selection-card budget-card" data-key="budget" data-val="${item.id}" tabindex="0" role="radio" aria-checked="false">
-      <input type="radio" name="budgetTier" value="${item.id}" class="card-radio-input" tabindex="-1">
-      <div class="budget-tier-val">${item.label}</div>
-      <div class="budget-tier-desc">${item.hint}</div>
-      <div class="card-check-indicator" aria-hidden="true" style="margin-top:0.75rem;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
-    </label>
-  `).join('');
-
   // Attach card event handlers
   attachCardEvents();
 }
@@ -555,7 +601,6 @@ function attachCardEvents() {
 function handleCardSelection(key, val, selectedCardElement) {
   state.selections[key] = val;
 
-  // Visual active classes & accessibility attributes
   const siblings = selectedCardElement.parentElement.querySelectorAll('.selection-card, .involvement-card');
   siblings.forEach(el => {
     el.classList.remove('selected');
@@ -564,7 +609,6 @@ function handleCardSelection(key, val, selectedCardElement) {
   selectedCardElement.classList.add('selected');
   selectedCardElement.setAttribute('aria-checked', 'true');
 
-  // Enable continue button
   updateNavControls();
 }
 
@@ -576,7 +620,6 @@ function goToStep(stepNumber) {
 
   state.highestStepReached = Math.max(state.highestStepReached, stepNumber);
 
-  // Hide all steps
   for (let i = 1; i <= state.totalSteps; i++) {
     const stepEl = DOM.steps[i];
     if (stepEl) {
@@ -594,15 +637,20 @@ function goToStep(stepNumber) {
   updateProgressBar();
   updateNavControls();
 
-  // If navigating to step 5, compute recommendations
-  if (stepNumber === 5) {
-    generateAndRenderCampaign();
-    DOM.wizardNavFooter.style.display = 'none'; // hide step 1-4 nav
+  // If navigating to step 4 (Campaign Strategy)
+  if (stepNumber === 4) {
+    renderCampaignStrategy();
+    DOM.wizardNavFooter.style.display = 'flex';
+    DOM.btnContinueText.textContent = 'Choose Package';
+  } else if (stepNumber === 5) {
+    // If navigating to step 5 (Choose Package)
+    renderPackages();
+    DOM.wizardNavFooter.style.display = 'none'; // Package cards have their own select buttons
   } else {
     DOM.wizardNavFooter.style.display = 'flex';
+    DOM.btnContinueText.textContent = 'Continue';
   }
 
-  // Scroll to top of wizard on step change
   DOM.campaignForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -624,12 +672,11 @@ function updateProgressBar() {
       btn.disabled = false;
     } else if (stepIdx < state.currentStep) {
       li.classList.add('completed');
-      btn.disabled = false; // allow clicking previous steps
+      btn.disabled = false;
     } else if (stepIdx <= state.highestStepReached) {
       li.classList.add('completed');
-      btn.disabled = false; // already visited in current flow
+      btn.disabled = false;
     } else {
-      // Future step not yet reached
       btn.disabled = true;
     }
   });
@@ -639,78 +686,38 @@ function updateProgressBar() {
  * Update Back and Continue button states
  */
 function updateNavControls() {
-  // Step 1: Back disabled
   DOM.btnBack.disabled = state.currentStep === 1;
 
-  // Determine if current step has a valid selection
   let hasSelection = false;
   if (state.currentStep === 1) hasSelection = Boolean(state.selections.business);
   else if (state.currentStep === 2) hasSelection = Boolean(state.selections.goal);
   else if (state.currentStep === 3) hasSelection = Boolean(state.selections.involvement);
-  else if (state.currentStep === 4) hasSelection = Boolean(state.selections.budget);
+  else if (state.currentStep === 4) hasSelection = true; // can proceed to choose package
 
   DOM.btnContinue.disabled = !hasSelection;
 }
 
-/* ==========================================================================
-   5. CAMPAIGN RESOLVER & RESULTS RENDERER
-   ========================================================================== */
-
 /**
- * Resolve selections to match preset rule or generate fallback
- */
-function resolveCampaign() {
-  const { business, goal, involvement, budget } = state.selections;
-
-  // 1. Search for exact preset match
-  const exactMatch = PRESET_RULES.find(rule => {
-    const matchBiz = (rule.business === '*' || rule.business === business);
-    const matchGoal = (rule.goal === '*' || rule.goal === goal);
-    const matchInv = (rule.involvement === '*' || rule.involvement === involvement);
-    const matchBud = (rule.budget === '*' || rule.budget === budget);
-    return matchBiz && matchGoal && matchInv && matchBud;
-  });
-
-  if (exactMatch) {
-    return {
-      packageName: exactMatch.packageName,
-      deliverables: exactMatch.deliverables,
-      rationale: generateRecommendationRationale(business, goal)
-    };
-  }
-
-  // 2. Synthesize fallback
-  const fallback = buildFallbackCampaign(business, goal, involvement, budget);
-  return {
-    packageName: fallback.packageName,
-    deliverables: fallback.deliverables,
-    rationale: generateRecommendationRationale(business, goal)
-  };
-}
-
-/**
- * Lookup display titles for selections
+ * Look up readable display titles
  */
 function getSelectionLabels() {
   const bizObj = CONFIG.businessTypes.find(b => b.id === state.selections.business);
   const goalObj = CONFIG.goals.find(g => g.id === state.selections.goal);
   const invObj = CONFIG.involvementTiers.find(i => i.id === state.selections.involvement);
-  const budObj = CONFIG.budgetTiers.find(b => b.id === state.selections.budget);
 
   return {
     business: bizObj ? bizObj.title : 'Not specified',
     goal: goalObj ? goalObj.title : 'Not specified',
-    involvement: invObj ? `${invObj.title} (${invObj.subtitle})` : 'Not specified',
-    budget: budObj ? budObj.label : 'Not specified'
+    involvement: invObj ? `${invObj.title} (${invObj.subtitle})` : 'Not specified'
   };
 }
 
 /**
- * Generate and display Step 5 results
+ * Render Step 4: Campaign Strategy & Rationale
  */
-function generateAndRenderCampaign() {
+function renderCampaignStrategy() {
   const labels = getSelectionLabels();
-  const campaign = resolveCampaign();
+  const { business, goal, involvement } = state.selections;
 
   // 1. Render Summary Bar
   DOM.selectionSummary.innerHTML = `
@@ -726,17 +733,11 @@ function generateAndRenderCampaign() {
       <span class="summary-label">Involvement level</span>
       <span class="summary-val" title="${labels.involvement}">${labels.involvement}</span>
     </div>
-    <div class="summary-item">
-      <span class="summary-label">Budget</span>
-      <span class="summary-val" title="${labels.budget}">${labels.budget}</span>
-    </div>
   `;
 
-  // 2. Package Badge
-  DOM.campaignPackageBadge.textContent = campaign.packageName;
-
-  // 3. Deliverables List
-  DOM.deliverablesContainer.innerHTML = campaign.deliverables.map(deliv => `
+  // 2. Deliverables Focus Grid
+  const strategyFocus = getStrategyFocus(business, goal, involvement);
+  DOM.deliverablesContainer.innerHTML = strategyFocus.map(item => `
     <div class="deliverable-card">
       <div class="deliverable-icon-wrap" aria-hidden="true">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -744,44 +745,145 @@ function generateAndRenderCampaign() {
         </svg>
       </div>
       <div>
-        <div class="deliverable-title">${deliv.name}</div>
-        <div class="deliverable-meta">${deliv.desc}</div>
+        <div class="deliverable-title">${item.name}</div>
+        <div class="deliverable-meta">${item.desc}</div>
       </div>
     </div>
   `).join('');
 
-  // 4. Rationale text
-  DOM.rationaleText.textContent = campaign.rationale;
+  // 3. Rationale
+  DOM.rationaleText.textContent = generateRecommendationRationale(business, goal);
 }
 
-/* ==========================================================================
-   6. MODAL & ENQUIRY WORKFLOW
-   ========================================================================== */
+/**
+ * Render Step 5: 4-Package Comparison Grid
+ */
+function renderPackages() {
+  const { business, goal, involvement } = state.selections;
+  const packages = buildFourPackages(business, goal, involvement);
+
+  DOM.packageCardsGrid.innerHTML = packages.map(pkg => `
+    <div class="package-card ${state.selections.package === pkg.id ? 'selected' : ''}" data-pkg-id="${pkg.id}">
+      <div class="package-card-header">
+        <h3 class="package-tier-name">${pkg.name}</h3>
+        <p class="package-tier-subtitle">${pkg.subtitle}</p>
+      </div>
+      <ul class="package-services-list">
+        ${pkg.services.map(s => `
+          <li class="package-service-item ${s.isNew ? 'newly-added' : ''}">
+            <span class="service-check" aria-hidden="true">✓</span>
+            <span>${s.text} ${s.isNew ? '<span class="new-badge">NEW</span>' : ''}</span>
+          </li>
+        `).join('')}
+      </ul>
+      <div class="package-card-footer">
+        <div class="package-price-wrap">
+          <span class="package-price-label">Estimated Price</span>
+          <span class="package-price-value">£${pkg.price.toLocaleString()}</span>
+        </div>
+        <button type="button" class="btn-select-package" data-select-pkg="${pkg.id}">
+          SELECT ${pkg.name}
+        </button>
+      </div>
+    </div>
+  `).join('');
+
+  // Attach button click listeners
+  DOM.packageCardsGrid.querySelectorAll('.btn-select-package').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const pkgId = btn.dataset.selectPkg;
+      selectPackage(pkgId, packages);
+    });
+  });
+
+  // Also allow clicking the package card directly
+  DOM.packageCardsGrid.querySelectorAll('.package-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const pkgId = card.dataset.pkgId;
+      selectPackage(pkgId, packages);
+    });
+  });
+
+  // If a package was already selected in state, re-render the summary
+  if (state.selections.package) {
+    const currentPkg = packages.find(p => p.id === state.selections.package);
+    if (currentPkg) {
+      displayFinalSummary(currentPkg);
+    }
+  } else {
+    DOM.finalCampaignSummary.hidden = true;
+  }
+}
+
+/**
+ * Handle package selection & show Final Summary
+ */
+function selectPackage(pkgId, packages) {
+  state.selections.package = pkgId;
+
+  // Highlight card
+  DOM.packageCardsGrid.querySelectorAll('.package-card').forEach(card => {
+    card.classList.toggle('selected', card.dataset.pkgId === pkgId);
+  });
+
+  const selectedPkg = packages.find(p => p.id === pkgId);
+  if (selectedPkg) {
+    displayFinalSummary(selectedPkg);
+  }
+}
+
+/**
+ * Display the Final Summary section per user specifications
+ */
+function displayFinalSummary(pkg) {
+  const labels = getSelectionLabels();
+
+  DOM.summaryBusinessVal.textContent = labels.business;
+  DOM.summaryGoalVal.textContent = labels.goal;
+  DOM.summaryInvolvementVal.textContent = labels.involvement;
+  DOM.summaryPackageVal.textContent = `${pkg.name} — ${pkg.subtitle}`;
+  DOM.summaryPackageBadge.textContent = `${pkg.name} Package`;
+
+  DOM.summaryServicesList.innerHTML = pkg.services.map(s => `
+    <li>${s.text}</li>
+  `).join('');
+
+  DOM.summaryCostVal.textContent = `£${pkg.price.toLocaleString()}`;
+
+  DOM.finalCampaignSummary.hidden = false;
+
+  // Smooth scroll to summary
+  DOM.finalCampaignSummary.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ============================================================================
+// 6. ENQUIRY MODAL WORKFLOW
+// ============================================================================
 
 function openEnquiryModal() {
   const labels = getSelectionLabels();
-  const campaign = resolveCampaign();
+  const { business, goal, involvement } = state.selections;
+  const packages = buildFourPackages(business, goal, involvement);
+  const selectedPkg = packages.find(p => p.id === state.selections.package) || packages[0];
 
-  // Populate recap box inside modal
   DOM.modalCampaignRecap.innerHTML = `
     <div class="recap-title">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
         <polyline points="22 4 12 14.01 9 11.01"></polyline>
       </svg>
-      <span>Selected Package: <strong>${campaign.packageName}</strong></span>
+      <span>Selected Package: <strong>${selectedPkg.name} (Estimated £${selectedPkg.price.toLocaleString()})</strong></span>
     </div>
     <div class="recap-details">
-      ${labels.business} &bull; ${labels.goal} &bull; ${labels.budget}
+      ${labels.business} &bull; ${labels.goal} &bull; ${labels.involvement}
     </div>
   `;
 
-  // Reset enquiry form view
   DOM.enquiryForm.hidden = false;
   DOM.enquirySuccessState.hidden = true;
   DOM.enquiryForm.reset();
 
-  // Show native modal
   DOM.enquiryModal.showModal();
 }
 
@@ -793,18 +895,21 @@ function handleEnquirySubmit(e) {
   e.preventDefault();
 
   const labels = getSelectionLabels();
+  const { business, goal, involvement } = state.selections;
+  const packages = buildFourPackages(business, goal, involvement);
+  const selectedPkg = packages.find(p => p.id === state.selections.package) || packages[0];
+
   const name = document.getElementById('clientName').value;
-  const business = document.getElementById('businessName').value;
+  const businessName = document.getElementById('businessName').value;
   const email = document.getElementById('clientEmail').value;
   const phone = document.getElementById('clientPhone').value;
 
-  // Build confirmation details
   DOM.successDetailsBox.innerHTML = `
     <p><strong>Client:</strong> ${name}</p>
-    <p><strong>Business:</strong> ${business}</p>
+    <p><strong>Business:</strong> ${businessName}</p>
     <p><strong>Contact:</strong> ${email} | ${phone}</p>
     <p style="margin-top:0.4rem; padding-top:0.4rem; border-top:1px dashed var(--color-border);">
-      <strong>Campaign scope:</strong> ${labels.business} &bull; ${labels.goal} &bull; ${labels.budget}
+      <strong>Package:</strong> ${selectedPkg.name} (£${selectedPkg.price.toLocaleString()}) &bull; ${labels.business} &bull; ${labels.goal}
     </p>
   `;
 
@@ -812,15 +917,14 @@ function handleEnquirySubmit(e) {
   DOM.enquirySuccessState.hidden = false;
 }
 
-/* ==========================================================================
-   7. EVENT LISTENERS & INITIALIZATION
-   ========================================================================== */
+// ============================================================================
+// 7. EVENT LISTENERS & INITIALIZATION
+// ============================================================================
 
 function initApp() {
-  // Render cards
   renderAllOptionCards();
 
-  // Nav buttons
+  // Navigation button listeners
   DOM.btnContinue.addEventListener('click', () => {
     if (state.currentStep < state.totalSteps) {
       goToStep(state.currentStep + 1);
@@ -833,7 +937,7 @@ function initApp() {
     }
   });
 
-  // Top progress bar direct clicks for past steps
+  // Top progress bar direct clicks
   DOM.progressTrack.addEventListener('click', (e) => {
     const btn = e.target.closest('.step-btn');
     if (!btn || btn.disabled) return;
@@ -845,8 +949,12 @@ function initApp() {
 
   // Step 5 Actions
   DOM.btnRequestCampaign.addEventListener('click', openEnquiryModal);
+
+  DOM.btnChangePackage.addEventListener('click', () => {
+    DOM.packageCardsGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
   DOM.btnModifyCampaign.addEventListener('click', () => {
-    // Return to step 1 to allow modification with all selections saved
     goToStep(1);
   });
 
@@ -873,5 +981,4 @@ function initApp() {
   goToStep(1);
 }
 
-// Run on DOM content loaded
 document.addEventListener('DOMContentLoaded', initApp);
